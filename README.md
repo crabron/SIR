@@ -1,20 +1,22 @@
 # SIR
 
-## 1
-
-Данные и презентации доступны на [Google Drive](https://drive.google.com/drive/folders/1hz8juRhOZ1xTNPb6A-U5zbF_8Fq5CYiG)
-
-Тест
-
-https://forms.gle/GoyBXXhZoMLRMqHn8
-
-## Установка R, RStudia и tidyverse
+## Day 1
 
 
-https://cran.rstudio.com/
+[Тест](https://forms.gle/GoyBXXhZoMLRMqHn8)
+
+
+### Установка R, RStudia и tidyverse
+
+R \
+https://cran.rstudio.com/ 
+
+RStudio \
 https://posit.co/download/rstudio-desktop/
 
 install.packages('tidyverse')
 
+### Данные 
 
-
+[csv](day_1/pen.csv)
+[xlsl](day_1/pen.xlsx)
