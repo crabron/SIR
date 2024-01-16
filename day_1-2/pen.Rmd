@@ -1,0 +1,519 @@
+---
+title: "SIR - введение в базовое R"
+author: "Grigory Gladkov"
+date: "2023-01-16"
+
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    number_sections: false
+    theme: lumen
+---
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+knitr::opts_knit$set(root.dir = "~/Documents/SIR_wd/")
+# rmarkdown::find_pandoc(dir = "/home/gladkov/.conda/envs/bi/bin")
+options(getClass.msg=FALSE)
+
+```
+
+
+## импорт
+
+```{r}
+
+library(readxl)
+library(tidyverse)
+
+```
+
+
+## Горячие клавиши:
+
+- `Ctrl + Shift + C` - закомментировать/раскомментировать
+- `Ctrl + Enter` - выполнить активную строку
+- `Tab` или `Ctrl + Space` - автоподстановка
+-  `Alt + -` - присвоение
+- `Ctr + Shift + M` - pipe
+- Встроенная справка ?названиеФункции
+
+
+# День 1
+
+## Задать рабочее окружение
+
+```{r}
+
+setwd('~/Documents/SIR_wd/') 
+getwd()
+list.files()
+
+```
+
+чтение файла(csv - comma delimited - разделитель запятая)
+
+
+```{r}
+
+pen <- read.csv('pen.csv', row.names = 'X')
+
+```
+
+## Cвойства таблицы
+
+класс объекта
+
+```{r}
+
+class(pen)
+
+```
+
+
+количество строк
+
+```{r}
+
+nrow(pen)
+
+
+```
+
+количество столбцов
+
+```{r}
+
+ncol(pen)
+
+```
+
+
+типы столбцов
+
+```{r}
+
+str(pen)
+
+```
+
+проверить на наличие NA и удалить их
+
+```{r}
+
+colSums(is.na(pen))
+
+```
+
+```{r}
+
+pen.no.na <- na.omit(pen)
+
+```
+
+
+## Индексация 
+
+столбцы \
+`%>% head()`  вставлено для удобства вывода
+
+```{r, rows.print=5}
+
+pen.no.na[,2] %>% 
+  head()
+
+```
+
+
+
+```{r, rows.print=5}
+
+pen.no.na[,'island'] %>% 
+  head()
+
+```
+
+строки
+
+```{r}
+
+pen.no.na[2,]
+
+```
+
+```{r}
+
+pen.no.na[c('pen_1', 'pen_3'),] 
+
+```
+
+ячейка
+
+```{r}
+
+pen.no.na[13,5]
+
+```
+
+
+фильтрация \
+Только те строки где пингвины - Адели \
+`%>% head()` вставлено для удобства вывода
+
+```{r}
+
+head(pen.no.na[pen.no.na$species  == 'Adelie',]) %>% 
+  head()
+
+```
+
+# День 2
+## Логические операторы
+
+- `&` - логический оператор 'И' 
+- `|` - логический оператор 'И'
+- `!=` - логический оператор 'НЕ'
+- `==` - логический оператор 'РАВНО'
+
+Только те строки где пингвины - Адели и самцы
+
+```{r}
+
+pen.no.na[pen.no.na$species  == 'Adelie' & pen.no.na$sex  == 'male',] %>% 
+  head()
+
+```
+
+еще примеры фильтрации
+
+```{r}
+
+pen.no.na[pen.no.na$body_mass_g > 3200,] %>% 
+  head()
+
+```
+
+```{r}
+
+pen.no.na[pen.no.na$body_mass_g > 3200 | pen.no.na$bill_length_mm > 200, ] %>% 
+  head()
+
+```
+
+
+## Циклы и списки
+
+код учебный - это неэффективный путь
+
+
+Создаём список из массы тела
+
+```{r, rows.print=5}
+
+mass.list <-  as.list(pen.no.na$body_mass_g)
+mass.list %>% 
+  head()
+
+```
+
+циклом пересчитываем массу тела из килограмы в пуды, \
+превращаем список обратно в вектор в конце
+
+```{r, rows.print=5}
+
+pood.mass <- list()
+
+for (i in mass.list){
+  res <- i / 16.3807
+  pood.mass <- append(pood.mass, res)
+}
+
+unlist(pood.mass) 
+
+```
+
+
+можно было проще
+
+```{r, max.print=5}
+
+pen.no.na$body_mass_g / 16.3807
+
+```
+
+## Семейство apply
+Лучше итерироваться семейством функций apply. 
+
+```{r}
+
+apply(pen.no.na[,3:6], 2,  mean)
+
+```
+
+```{r}
+
+colMeans(pen.no.na[,3:6])
+
+```
+
+```{r}
+
+apply(pen.no.na[,3:6], 2,  median)
+
+```
+
+
+
+## Пользовательские функции
+
+
+```{r}
+
+pood_transformer <- function(value){
+  pood <- 16.3807
+  res <- value / pood
+  res
+}
+
+sapply(pen.no.na$body_mass_g, pood_transformer)
+
+```
+
+
+## Tidyverse
+
+pipe - `Ctr + Shift + M`
+
+```{r, include=FALSE}
+
+library(readxl)
+library(tidyverse)
+
+```
+
+
+```{r}
+
+pen.ex <- read_xlsx('pen.xlsx')
+# pen.ex <- readxl::read_xlsx('pen.xlsx')
+pen.ex
+
+```
+
+pen.no.na[,'island']
+
+```{r}
+
+pen.ex %>% 
+  select(island) %>% 
+  head()
+
+```
+
+pen.no.na <- na.omit(pen)
+
+```{r}
+
+pen.ex.na <- pen.ex %>% 
+  drop_na()
+
+```
+
+
+pen.no.na[pen.no.na$species  == 'Adelie' & pen.no.na$sex  == 'male',]
+
+```{r}
+
+pen.ex.na %>% 
+  filter(species == 'Adelie' & sex == 'male') 
+
+```
+
+## Семейство mutate
+добавляем новую колонку - теперь масса пингвинов в пудах
+
+```{r}
+
+pen.ex.na %>% 
+  mutate(body_mass_pood = pood_transformer(body_mass_g)) 
+
+```
+
+можем извлечь столбец в вектор
+
+```{r}
+
+pen.ex.na %>% 
+  mutate(body_mass_pood = pood_transformer(body_mass_g)) %>% 
+  pull(body_mass_pood) 
+
+```
+
+отбираем только те стобцы, которые содержат '_g' \
+преобразем все столбцы в оставшейся таблице
+
+```{r}
+
+pen.ex.na %>% 
+  select(contains('_g')) %>% 
+  mutate_all(pood_transformer) %>% 
+  head()
+
+```
+
+более корректная альтернатива - отбираем столбец по названию
+
+```{r}
+
+pen.ex.na %>% 
+  mutate_at('body_mass_g', pood_transformer) %>% 
+  head()
+
+```
+
+
+### Группировка, сводные таблицы
+
+количество пингвинов на разных островах
+
+```{r}
+
+pen.ex %>% 
+  group_by(island) %>% 
+  count() 
+
+```
+
+```{r, eval=FALSE}
+
+pen.ex %>% 
+  group_by(island) %>% 
+  median()
+
+```
+
+?count()
+?median()
+
+медиана для отдельных островов
+
+```{r}
+
+pen.ex.na %>% 
+  group_by(island) %>% 
+  summarise_all(median)
+
+```
+медиана для отдельных островов - но оставлены только столбцы с цифрами
+
+```{r}
+
+pen.ex.na %>% 
+  group_by(island) %>% 
+  summarise_if(is.numeric, median)
+
+```
+
+медиана по весу в пудах
+
+```{r}
+
+pen.ex.na %>% 
+  group_by(island) %>% 
+  summarise(median_pood = median(pood_transformer(body_mass_g)))
+
+```
+
+## ggplot2
+
+Стандартный пакет для визуализации - зависимость длины клюва от веса
+
+```{r}
+
+plot(pen.ex.na$bill_length_mm, pen.ex.na$body_mass_g)
+
+```
+
+длина клюва зависит от массы тела?
+
+```{r}
+
+ggplot(data = pen.ex.na) +
+  geom_point(aes(x = body_mass_g, 
+                 y = bill_length_mm))
+
+```
+
+
+
+?stat_smooth
+
+```{r}
+
+pen.ex.na %>% 
+  ggplot(aes(x = body_mass_g, 
+             y = bill_length_mm)) +
+  geom_point() +
+  stat_smooth(method = "lm")
+
+```
+
+разные виды?
+
+
+```{r}
+
+pen.ex.na %>% 
+  ggplot() +
+  geom_point(aes(x = body_mass_g, 
+                 y = bill_length_mm, 
+                 color = species))
+
+```
+
+### Боксплоты
+
+смотрим вес у разных родов c разбиением на пол при помощи боксплотов
+
+```{r}
+
+pen.ex.na %>% 
+  ggplot() +
+  geom_boxplot(aes(y = body_mass_g, x = species))
+
+```
+
+
+```{r}
+
+pen.ex.na %>% 
+  ggplot() +
+  geom_boxplot(aes(y = body_mass_g, x = species, color = sex))
+
+```
+
+
+у одних и тех же пингвинов на разных островах один и тот же вес
+
+```{r}
+
+pen.ex.na %>% 
+  ggplot(aes(y = body_mass_g, x = species, color = sex)) +
+  geom_boxplot() +
+  facet_wrap(~ island)
+
+```
+
+## Версии пакетов
+
+```{r}
+
+sessionInfo()
+
+```
+

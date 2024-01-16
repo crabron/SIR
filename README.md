@@ -2,7 +2,6 @@
 
 ## Day 1
 
-
 [Тест](https://forms.gle/GoyBXXhZoMLRMqHn8)
 
 
@@ -20,3 +19,10 @@ install.packages('tidyverse')
 
 [csv](day_1/pen.csv)
 [xlsl](day_1/pen.xlsx)
+
+## Day 2
+
+[Тест](https://forms.gle/LmS52gq27mSrTRiBA)
+
+Код за первый и второй дни 
+[код](day_1-2/pen.html)
