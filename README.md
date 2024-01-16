@@ -26,7 +26,7 @@ Palmer Archipelago (Antarctica) penguin data
 
 ## Day 2
 
-[Тест](https://forms.gle/LmS52gq27mSrTRiBA) \
+[Тест](https://forms.gle/LmS52gq27mSrTRiBAsg) \
 [Слайды](https://drive.google.com/file/d/1ShbQdLotbEyXouvxprDBXbNNfndQk_Xm/view?usp=drive_link) 
 
 Код за первый и второй дни \
