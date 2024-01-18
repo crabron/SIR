@@ -60,7 +60,14 @@ Palmer Archipelago (Antarctica) penguin data
 [код](https://drive.google.com/file/d/1vo0qxdofNbTostHE_ksx_W5eHxjQYiGI/view?usp=drive_link) \
 [Слайды](https://drive.google.com/file/d/1QN5PWtlcIVRnw89zFDMYg-dm2fSyUQaT/view?usp=drive_link)
 
-Полный датасет по Пулково
+Полный датасет по Пулково \
 [ps.ff](day_4/ps.ff) \
 Функция phyloseq_to_ampvis2 \
 [ps_to_amp.R](day_4/ps_to_amp.R) 
+
+Установка пакетов: 
+- ggpubr есть в CRAN \
+- ampvis2 надо ставить из гитхаба:
+
+install.packages(“remotes”) \
+remotes::install_github(“kasperskytte/ampvis2”)
