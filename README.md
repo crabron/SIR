@@ -82,7 +82,7 @@ QIIME 2 - базовый туториал: \
 ampvis2 - библиотека для визуализации: \
 [ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html) \
 phyloseq - визуализация и организация даннных: \
-[ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html) \
+[ссылка](https://joey711.github.io/phyloseq/) \
 Приятный курс - глава где написано как статистически сравнивать представленность: \
 [ссылка](https://microbiome.github.io/course_2021_radboud/differential-abundance-analysis.html) \
 vegan - статистика для экологии, много отдельных материалов, phyloseq работает на его базе \
