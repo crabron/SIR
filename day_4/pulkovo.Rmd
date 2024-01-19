@@ -1,0 +1,252 @@
+---
+title: "pulkovo - phyloseq - basic EDA"
+author: "Grigory Gladkov"
+date: "2024-01-18"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_depth: 5
+    number_sections: no
+    theme: lumen
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Импорт пакетов
+
+Установка пакетов: \
+- ggpubr есть в CRAN \
+- ampvis2 надо ставить из гитхаба: 
+
+install.packages("remotes") \
+remotes::install_github("kasperskytte/ampvis2")
+
+setwd - ваша рабочая директория \
+В ней должны лежать ps.ff и bargraph.R
+
+```{r}
+
+library(phyloseq)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(ampvis2)
+
+source('bargraph.R')
+setwd('~/Documents/SIR_wd/')
+
+```
+
+Чтение RDS объекта, изменение метаданных
+
+```{r}
+
+ps <- readRDS('ps.ff')
+
+ps@sam_data <- ps@sam_data %>% 
+  data.frame() %>% 
+  mutate(Salinity = as.factor(Site) %>% 
+          recode(Ashan = 'Low',
+                 Middle = 'Middle',
+                 high_road = 'High')) %>% 
+  relocate(Salinity) %>% 
+  sample_data()
+
+ps  
+
+```
+
+## Базовые характеристики
+
+Сколько у нас прочтений на каждую библиотеку?
+
+```{r}
+
+sample_sums(ps) %>% 
+  sort()
+
+```
+
+Сколько у нас прочтений на ASV?
+
+```{r}
+
+taxa_sums(ps) %>% 
+  hist(breaks = 100)
+
+```
+
+## Бета-разнообразие
+
+
+```{r}
+
+ord.pcoa <- ordinate(ps, method = 'PCoA', distance = 'bray')
+plot_scree(ord.pcoa)
+
+```
+```{r}
+
+plot_ordination(ps, ord.pcoa, type = 'samples', color = 'Salinity')
+
+```
+Из туториала vegan:
+https://rpubs.com/CPEL/NMDS \
+As a rule of thumb literature has identified the following cut-off values for stress-level: \
+
+    Higher than 0.2 is poor (risks for false interpretation).
+    0.1 - 0.2 is fair (some distances can be misleading for interpretation).
+    0.05 - 0.1 is good (can be confident in inferences from plot).
+    Less than 0.05 is excellent (this can be rare).
+
+
+```{r, message=FALSE, fig.asp=1}
+
+# vegan::vegdist(ps@otu_table %>% as.data.frame())
+ord.nmds <- ordinate(ps, method = 'NMDS', distance = 'bray')
+ord.nmds$grstress
+vegan::stressplot(ord.nmds)
+
+```
+
+```{r}
+
+plot_ordination(ps, ord.nmds, type = 'samples', color = 'Salinity')
+
+```
+
+
+Разрежение
+
+```{r}
+
+ps.r <- rarefy_even_depth(ps, rngseed = 23)
+ord.r <- ordinate(ps.r, method = 'PCoA', distance = 'bray')
+plot_ordination(ps.r, ord.r, type = 'samples', color = 'Salinity')
+
+```
+
+Отбираем только точки из точки с высоким и средним засолением.
+
+```{r}
+
+ps.hm <- prune_samples(ps.r@sam_data$Salinity %in% c('High', 'Middle'), ps.r)
+ps.hm <- prune_taxa(taxa_sums(ps.hm) > 0, ps.hm)
+ps.hm
+
+```
+
+```{r}
+
+ord.hm <- ordinate(ps.hm, method = 'PCoA', distance = 'bray')
+plot_ordination(ps.hm, ord.hm, type = 'samples', color = 'Salinity')
+
+```
+
+p-value hacking
+
+```{r}
+
+dist <- phyloseq::distance(ps.hm, "bray")
+metadata <- sample_data(ps.hm@sam_data) %>% 
+  data.frame()
+vegan::adonis2(dist ~ Salinity, data = metadata)
+
+```
+
+## Альфа-разнообразие
+
+```{r}
+
+plot_richness(ps.hm, x = 'Salinity', measures = c('Observed', 'Shannon', 'InvSimpson'), color = 'Salinity')
+
+```
+
+```{r, fig.height=4, fig.width=3}
+
+p.alpha <- phyloseq::estimate_richness(ps.hm,  measures = c('Observed', 'Shannon', 'InvSimpson')) %>% 
+  cbind2(ps.hm@sam_data %>% data.frame) %>% 
+  ggplot(aes(x = Salinity, y = Observed)) +
+    geom_boxplot()
+    
+p.alpha
+
+```
+
+еще больше p-value хакинга
+
+```{r, fig.height=4, fig.width=3}
+
+p.alpha + 
+  stat_compare_means() +
+  stat_compare_means(label = "p.signif", label.x = 1.5, label.y = 4)
+
+```
+
+## Относительная представленность
+
+```{r}
+
+plot_bar(ps.hm, fill="Phylum", x = 'Salinity')
+
+```
+
+```{r}
+
+bargraph(ps, "Phylum", 0.02) +
+  facet_grid(~Salinity ,scales = 'free_x') 
+
+```
+
+
+```{r, message=FALSE}
+
+amp.hm <- amp_load(ps.hm)
+amp.hm
+
+```
+
+```{r, fig.height=6, fig.width=4}
+
+amp_heatmap(amp.hm, group_by = 'Salinity', 
+            tax_aggregate = 'Phylum',
+            tax_show = 15)
+
+```
+
+```{r, fig.height=6}
+
+amp_heatmap(amp.hm, 
+            group_by = 'Salinity', 
+            tax_aggregate = 'Species', 
+            tax_add = 'Genus', 
+            tax_show = 30)
+
+```
+
+```{r, fig.asp=1}
+
+amp_venn(amp.hm, group_by = 'Salinity', cut_a = 0.001)
+
+```
+
+
+Если вам нужно посмотреть как статистически различаются представленности, посмотрите например вот этот мануал: \
+https://microbiome.github.io/course_2021_radboud/differential-abundance-analysis.html
+
+
+```{r}
+
+sessionInfo()
+
+
+```
+

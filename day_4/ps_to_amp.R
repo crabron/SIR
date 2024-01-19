@@ -1,6 +1,4 @@
-#!R
-
-phyloseq_to_ampvis2 <- function(physeq) {
+ps_to_amp <- function(physeq) {
   #check object for class
   if(!any(class(physeq) %in% "phyloseq"))
     stop("physeq object must be of class \"phyloseq\"", call. = FALSE)
