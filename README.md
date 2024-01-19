@@ -68,17 +68,19 @@ Palmer Archipelago (Antarctica) penguin data
 - ggpubr есть в CRAN \
 - ampvis2 надо ставить из гитхаба:
 
+```
 install.packages(“remotes”) \
 remotes::install_github(“kasperskytte/ampvis2”)
+```
 
 Дополнительно 
 
 QIIME 2 - базовый туториал: \
-[ссылка](https://docs.qiime2.org/2023.9/tutorials/moving-pictures/) 
+[ссылка](https://docs.qiime2.org/2023.9/tutorials/moving-pictures/) \
 ampvis2 - библиотека для визуализации: \
-[ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html)
+[ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html) \
 phyloseq - визуализация и организация даннных: \
-[ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html)
+[ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html) \
 Приятный курс - глава где написано как статистически сравнивать представленность: \
 [ссылка](https://microbiome.github.io/course_2021_radboud/differential-abundance-analysis.html) \
 vegan - статистика для экологии, много отдельных материалов, phyloseq работает на его базе \
