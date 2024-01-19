@@ -14,7 +14,9 @@ https://cran.rstudio.com/
 RStudio \
 https://posit.co/download/rstudio-desktop/
 
+```
 install.packages('tidyverse')
+```
 
 
 
@@ -69,7 +71,7 @@ Palmer Archipelago (Antarctica) penguin data
 - ampvis2 надо ставить из гитхаба:
 
 ```
-install.packages(“remotes”) \
+install.packages(“remotes”)
 remotes::install_github(“kasperskytte/ampvis2”)
 ```
 
