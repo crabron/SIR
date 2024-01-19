@@ -62,7 +62,7 @@ Palmer Archipelago (Antarctica) penguin data
 Полный датасет по Пулково \
 [ps.ff](day_4/ps.ff) \
 Функция bargraph.R \
-[ps_to_amp.R](day_4/bargraph.R) 
+[bargraph.R](day_4/bargraph.R) 
 
 Установка пакетов: 
 - ggpubr есть в CRAN \
