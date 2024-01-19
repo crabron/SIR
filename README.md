@@ -53,17 +53,16 @@ Palmer Archipelago (Antarctica) penguin data
 - phyloseq
 
 
-## День 4
-
+## День 4-5
 
 Код по работе с phyloseq \
-[код](https://drive.google.com/file/d/1vo0qxdofNbTostHE_ksx_W5eHxjQYiGI/view?usp=drive_link) \
+[код](day_4/pulkovo.html) \
 [Слайды](https://drive.google.com/file/d/1QN5PWtlcIVRnw89zFDMYg-dm2fSyUQaT/view?usp=drive_link)
 
 Полный датасет по Пулково \
 [ps.ff](day_4/ps.ff) \
-Функция phyloseq_to_ampvis2 \
-[ps_to_amp.R](day_4/ps_to_amp.R) 
+Функция bargraph.R \
+[ps_to_amp.R](day_4/bargraph.R) 
 
 Установка пакетов: 
 - ggpubr есть в CRAN \
@@ -71,3 +70,17 @@ Palmer Archipelago (Antarctica) penguin data
 
 install.packages(“remotes”) \
 remotes::install_github(“kasperskytte/ampvis2”)
+
+Дополнительно 
+
+QIIME 2 - базовый туториал: \
+[ссылка](https://docs.qiime2.org/2023.9/tutorials/moving-pictures/) 
+ampvis2 - библиотека для визуализации: \
+[ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html)
+phyloseq - визуализация и организация даннных: \
+[ссылка](https://kasperskytte.github.io/ampvis2/articles/ampvis2.html)
+Приятный курс - глава где написано как статистически сравнивать представленность: \
+[ссылка](https://microbiome.github.io/course_2021_radboud/differential-abundance-analysis.html) \
+vegan - статистика для экологии, много отдельных материалов, phyloseq работает на его базе \
+[ссылка](https://cloud.r-project.org/web/packages/vegan/vignettes/FAQ-vegan.html)
+
