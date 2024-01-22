@@ -88,3 +88,37 @@ phyloseq - визуализация и организация даннных: \
 vegan - статистика для экологии, много отдельных материалов, phyloseq работает на его базе \
 [ссылка](https://cloud.r-project.org/web/packages/vegan/vignettes/FAQ-vegan.html)
 
+## День 6
+
+[Слайды](https://drive.google.com/file/d/1mwGF-GUjrP6k7Unp3AMmxkYmt7LvlaXb/view?usp=drive_link)
+
+Установка openssh на Windows \
+В PowerShell с правами администратора: \
+
+```
+Get-WindowsCapability -Online | Where-Object Name -like ‘OpenSSH.Server*’ | Add-WindowsCapability –Online
+```
+или
+
+```
+dism /Online /Add-Capability /CapabilityName:OpenSSH.Server~~~~0.0.1.0
+```
+
+Проверить установку:
+
+```
+Get-WindowsCapability -Online | ? Name -like 'OpenSSH.Ser*'
+```
+Прокинуть порты:
+
+```
+ssh -p 9911 -f -N -L localhost:4467:localhost:4467 limiteduser@178.236.129.66
+```
+ввести пароль, не закрывать окно \
+В новом окне PowerShell:
+
+```
+ssh [ИМЯ_ПОЛЬЗОВАТЕЛЯ]@localhost -p 4467
+```
+Пароль - 12345 \
+Или использовать Putty
