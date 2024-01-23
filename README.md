@@ -133,14 +133,58 @@ ssh [ИМЯ_ПОЛЬЗОВАТЕЛЯ]@localhost -p 4467
 [ссылка](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
 
 ![putty_1](day_6-7/1.png) 
+Прокидываем порты:
+* IP адрес сервера в Host Name
+* порт 9911
+* создаем новый профиль (1, Load)
+-- 
 ![putty_2](day_6-7/2.png)
+Идем во вкладку SSH - tunnels
+* Source port - 4467
+* Destination - 127.0.0.1:4467
+Сохраняем(ADD)
 ![putty_2](day_6-7/3.png)
+Во вкладке SSH ставим галочку на Don't start a shell
+
+Открываем туннель - вводим:
+* пользователь - limiteduser
+* пароль - на доске(не будет отображаться)
+Ничего не должно происходить, оставляем окошко терминала открытым - это ssh туннель от пользователя limiteduser в основной системе(Ubuntu 20)
 ![putty_3](day_6-7/4.png)
+Открываем приложение putty еще раз - создаём новый профиль \
+Нам понадобится только первая страничка
+* Ноst name - localhost (то же что и 127.0.0.1)
+* Port - 4467 (мы создаём новый туннель, который присоединяем к первому туннелю открытому в предыдущем окне)
+* Открываем 
++ Пользователь - stud_[номер из таблички](day_6-7/list.docx)
++ Пароль - 12345
 
-### Сложные куски кода
+#### Установите себе linux в windows
+
+В powershell под правами администратора:
+
+```
+wsl --install
+```
+
+Перезагрузка \
+В качестве дистрибутива выбрать Ubuntu \
+Вызвать wsl - далее то же что и в варианте 1 (работа через openssh) \
+Отличие - не нужно открывать второе окно PowerShell
 
 
-Проверка качества - fastqc
+### Практика - поиск AR снипов у E.coli
+#### Сложные куски кода
+
+
+Проверка качества:
+* количество прочтений
+* fastqc 
+
+```
+awk '{s++}END{print s/4}' file.fastq
+fastqc amp* .
+```
 
 Тримминг - триммоматик
 
@@ -155,30 +199,38 @@ TRAILING:20
 
 ```
 
-Выравнивание на референс
+Выравнивание на референс  - форматы SAM и BAM \
+Статистика выравнивания
+
+```
+bwa-mem2 index genome.fna
+bwa-mem2 mem genome.fna amp_1.fatq.gz amp_2.fast.gz > al.sam
+samtools flagstat alignment.bam
 
 ```
 
-bwa-mem2 index genome.fna
-samtools flagstat alignment.bam
-bwa-mem2 mem genome.fna amp_1.fatq.gz amp_2.fast.gz > al.sam
+Подготовка файлов pileup для VarScan - форматы pileup
+
+```
+
 samtools sort al.sam > al_sorted.bam
+samtools mpileup -f genome.fna al_sorted.bam > ecoli.pileup
 
 ```
 
 Запуск VarScan - поиск snp
 
 ```
-varscan pileup2snp pileup --min-var-freq 0.5 --variants --output-vcf 1 > VarScan_results.vcf
+varscan pileup2snp ecoli.pileup --min-var-freq 0.5 --variants --output-vcf 1 > VarScan_results.vcf
 ```
 
-vcf в bed
+VCF в BED 
 
 ```
 awk 'BEGIN{FS=OFS="\t"}{if(NR>1){ print $1,$2-1,$2 }}' VarScan_results.vcf
 ```
 
-пересечение между bed и gff аннотацией
+| пересечение между bed и gff аннотацией
 
 ```
 bedtools intersect -wb -a ../data/genomic.gff -b
