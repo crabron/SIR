@@ -90,7 +90,12 @@ vegan - статистика для экологии, много отдельн�
 
 ## День 6
 
+
 [Слайды](https://drive.google.com/file/d/1mwGF-GUjrP6k7Unp3AMmxkYmt7LvlaXb/view?usp=drive_link)
+
+### Подключение к уделенному серверу
+
+#### Вариант 1 - через терминал Windows
 
 Установка openssh на Windows \
 В PowerShell с правами администратора: \
@@ -114,11 +119,69 @@ Get-WindowsCapability -Online | ? Name -like 'OpenSSH.Ser*'
 ```
 ssh -p 9911 -f -N -L localhost:4467:localhost:4467 limiteduser@178.236.129.66
 ```
-ввести пароль, не закрывать окно \
+ввести пароль(пароль не отображается!), не закрыть окно(если нет ошибки ) \
 В новом окне PowerShell:
 
 ```
 ssh [ИМЯ_ПОЛЬЗОВАТЕЛЯ]@localhost -p 4467
 ```
 Пароль - 12345 \
-Или использовать Putty
+
+#### Вариант 2 - через putty
+
+Установите Putty
+[ссылка](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
+
+![putty_1](day_6-7/1.png) 
+![putty_2](day_6-7/2.png)
+![putty_2](day_6-7/3.png)
+![putty_3](day_6-7/4.png)
+
+### Сложные куски кода
+
+
+Проверка качества - fastqc
+
+Тримминг - триммоматик
+
+```
+trimmomatic PE -phred33 amp_res_1.fastq amp_res_2.fastq \
+po_1.fastq uo_1.fastq \
+po_2.fastq uo_2.fastq \
+SLIDINGWINDOW:10:20 \
+MINLEN:20 \
+LEADING:20 \
+TRAILING:20
+
+```
+
+Выравнивание на референс
+
+```
+
+bwa-mem2 index genome.fna
+samtools flagstat alignment.bam
+bwa-mem2 mem genome.fna amp_1.fatq.gz amp_2.fast.gz > al.sam
+samtools sort al.sam > al_sorted.bam
+
+```
+
+Запуск VarScan - поиск snp
+
+```
+varscan pileup2snp pileup --min-var-freq 0.5 --variants --output-vcf 1 > VarScan_results.vcf
+```
+
+vcf в bed
+
+```
+awk 'BEGIN{FS=OFS="\t"}{if(NR>1){ print $1,$2-1,$2 }}' VarScan_results.vcf
+```
+
+пересечение между bed и gff аннотацией
+
+```
+bedtools intersect -wb -a ../data/genomic.gff -b
+```
+
+
