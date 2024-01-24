@@ -189,7 +189,7 @@ fastqc amp* .
 Тримминг - триммоматик
 
 ```
-trimmomatic PE -phred33 amp_res_1.fastq amp_res_2.fastq \
+trimmomatic PE -phred33 amp_res1.fastq.gz amp_res2.fastq.gz \
 po_1.fastq uo_1.fastq \
 po_2.fastq uo_2.fastq \
 SLIDINGWINDOW:10:20 \
@@ -203,9 +203,9 @@ TRAILING:20
 Статистика выравнивания
 
 ```
+
 bwa-mem2 index genome.fna
-bwa-mem2 mem genome.fna amp_1.fatq.gz amp_2.fast.gz > al.sam
-samtools flagstat alignment.bam
+bwa-mem2 mem genome.fna amp_res1.fastq.gz amp_res2.fastq.gz > al.sam
 
 ```
 
@@ -214,6 +214,7 @@ samtools flagstat alignment.bam
 ```
 
 samtools sort al.sam > al_sorted.bam
+samtools flagstat al_sorted.bam
 samtools mpileup -f genome.fna al_sorted.bam > ecoli.pileup
 
 ```
@@ -221,19 +222,25 @@ samtools mpileup -f genome.fna al_sorted.bam > ecoli.pileup
 Запуск VarScan - поиск snp
 
 ```
+
 varscan pileup2snp ecoli.pileup --min-var-freq 0.5 --variants --output-vcf 1 > VarScan_results.vcf
+
 ```
 
 VCF в BED 
 
 ```
+
 awk 'BEGIN{FS=OFS="\t"}{if(NR>1){ print $1,$2-1,$2 }}' VarScan_results.vcf
+
 ```
 
 | пересечение между bed и gff аннотацией
 
 ```
+
 bedtools intersect -wb -a ../data/genomic.gff -b
+
 ```
 
 ## Зачёт
