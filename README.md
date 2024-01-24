@@ -239,7 +239,7 @@ awk 'BEGIN{FS=OFS="\t"}{if(NR>1){ print $1,$2-1,$2 }}' VarScan_results.vcf
 
 ```
 
-bedtools intersect -wb -a ../data/genomic.gff -b
+bedtools intersect -wb -a ../data/genomic.gff -b stdin
 
 ```
 
